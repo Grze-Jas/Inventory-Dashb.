@@ -18,6 +18,9 @@ NAME: Inventory 'Wingman' Dashboard
 ### Subroutine to Read iDocs and pass its contenst to anoother sub
 ### Array formula looking for set of digits at 1 time, and returning their positions
 
++ extensive cross-tab, 2-SAP-t-codes automation of Material, price, value formula determination
++ as in screenshots (sheet example + dashboard looks in general)
+
 Details below:
 
 
