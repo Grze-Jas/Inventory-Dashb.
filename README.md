@@ -5,7 +5,7 @@ VBA project; focus on SAP <> Excel interactions
 NAME: Inventory 'Wingman' Dashboard
 
 ---> Please SEARCH/FIND VBA code HIGHLIGHTS with  " __________ " character set
----> ANYWAY, script highlights are more visible and searchable in README file !
+---> ANYWAY, script highlights are more visible and searchable in the TXT version of readme file !
 
 ### Removing header of SAP-import (done through text clipboard) with eg LIKE
 ### Application.Inputbox with : data entry, empty entry (fast re-use of previous data) and aborting
