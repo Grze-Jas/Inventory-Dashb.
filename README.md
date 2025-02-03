@@ -5,11 +5,12 @@ VBA project; focus on SAP <> Excel interactions
 NAME: Inventory 'Wingman' Dashboard
 
 ---> Please SEARCH/FIND VBA code HIGHLIGHTS with  " __________ " character set
+---> ANYWAY, script highlights are more visible and searchable in README file !
 
 ### Removing header of SAP-import (done through text clipboard) with eg LIKE
 ### Application.Inputbox with : data entry, empty entry (fast re-use of previous data) and aborting
 ### Item search modifiers: User gets prompted, next put in use
-### SAP t-code usege LOOPING, after errors
+### Looped searching via SAP t-code in case of errors
 ### Dictionary-based comparison of 2 lists
 ### Finding most frequent value in variable based range
 ### Calling other Sub
@@ -111,9 +112,9 @@ Else                                                                            
 End If
 
 
-__________ ### SAP t-code usege LOOPING, after errors
+__________ ### Looped searching via SAP t-code in case of errors
 ErrHan3:
-If iDocWhse <> "" Then                                                                                'IDOC -> outside this Inventory Type -> run MB51
+If iDocWhse <> "" Then                                                                                'IDOC -> if outside this Inventory Type, run MB51
     GoTo ErrHan1
 ElseIf iDocWhse = "" Then                                                                             'non-idoc -> next Loop section
     GoTo ErrHan2
