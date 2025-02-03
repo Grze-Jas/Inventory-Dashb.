@@ -9,7 +9,7 @@ NAME: Inventory processing 'Wingman Dashboard'
 ### Removing header of SAP-import (done through text clipboard) with eg LIKE
 ### Application.Inputbox with : data entry, empty entry (fast re-use of previous data) and aborting
 ### Item search modifiers: User gets prompted, next put in use
-### SAP t-code usege LOOPING, after errors
+### Looped search via SAP t-code, in case of errors
 ### Dictionary-based comparison of 2 lists
 ### Finding most frequent value in variable based range
 ### Calling other Sub
@@ -108,7 +108,7 @@ Else                                                                            
 End If
 
 
-__________ ### SAP t-code usege LOOPING, after errors
+__________ ### Looped search via SAP t-code, in case of errors
 ErrHan3:
 If iDocWhse <> "" Then                                                                                'IDOC -> outside this Inventory Type -> run MB51
     GoTo ErrHan1
