@@ -11,6 +11,7 @@ NAME: Inventory 'Wingman' Dashboard
 ### Application.Inputbox with : data entry, empty entry (fast re-use of previous data) and aborting
 ### Item search modifiers: User gets prompted, next put in use
 ### Looped searching via SAP t-code in case of errors
+### Flipping through SAP tables (2) to pass on a list to another Subroutine
 ### Dictionary-based comparison of 2 lists
 ### Finding most frequent value in variable based range
 ### Calling other Sub
@@ -167,6 +168,65 @@ __________ ### Dictionary-based comparison of 2 lists
    On Error Resume Next                                                                                   'feeds [E16] array with elements missing in [D16] vs [C16]
    [E16].Resize(n).Value = var
 
+### Flipping through SAP tables (2) to pass on a list to another Subroutine
+vbfa:                                                                                    'call SE16 + VFA Table
+    session.findById("wnd[0]").maximize
+    session.findById("wnd[0]/tbar[0]/okcd").Text = "se16"
+    session.findById("wnd[0]").sendVKey 0
+    session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "VBFA"
+    session.findById("wnd[0]").sendVKey 0
+    
+If Del <> "" Then                                                                        'if Delivery used, plug it in
+    session.findById("wnd[0]/usr/ctxtI3-LOW").Text = Del
+    session.findById("wnd[0]/tbar[1]/btn[8]").press
+    tdShipm = ""
+    GoTo exporting
+End If
+...
+If Len(Del) > 0 Then                                                                        'if Del, jump to further export
+    Range("g1").Formula = "=TRIM(MID(h1" & Chr(38) & """ "",9,9))"
+    GoTo sec_exporting
+End If
+ 
+If Len(inv) > 0 Then                                                                        'if invoice, count ZKEs encountered
+    For mbline = 1 To zkeCount                                                              'and grab batches from exported lines
+        Range("g" & mbline).Formula = "=TRIM(MID(h" & mbline & "" & Chr(38) & """ "",9,9))"
+    Next mbline
+End If
+
+If Len(tdShipm) > 0 Then                                                                    'grab batch from exported lines
+    Range("g1").Formula = "=TRIM(MID(h1" & Chr(38) & """ "",8,10))"
+End If
+
+sec_exporting:                                              ' copy & paste all as values
+Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G1:G" & zkeCount).Select
+Selection.Copy
+...
+If Len(inv) > 0 Then                                        'if invoice, jump to end process and export
+    GoTo ZKE
+End If
+
+If Len(tdShipm) > 0 Then                                    'if TD shipm., take Del# from G1 cell
+    Del = Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G1").Value
+    Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G:H").ClearContents
+    GoTo vbfa                                               ' resume VBFA block above
+End If
+
+
+If Len(Del) > 0 Then                                        'if Del, take ZKE# from G1 cell
+    ZKE = Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G1").Value
+    Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G:H").ClearContents
+    GoTo ZKE
+End If
+
+
+ZKE:                                                        'run SE16 for ZSD_OM_CONS_ISS TABLE
+session.findById("wnd[0]").maximize
+session.findById("wnd[0]/tbar[0]/okcd").Text = "se16"
+session.findById("wnd[0]").sendVKey 0
+session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "ZSD_OM_CONS_ISS"
+session.findById("wnd[0]").sendVKey 0
+......
 
 __________ ### Finding most frequent value in variable based range
 wb.Worksheets("Compare").Range("H2").Formula = "=INDEX(A10:A" & count & ",MODE(MATCH(A10:A" & count & ",A10:A" & count & ",0)))"
