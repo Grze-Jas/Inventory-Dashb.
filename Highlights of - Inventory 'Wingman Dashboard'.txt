@@ -2,14 +2,18 @@
 
 VBA project; focus on SAP <> Excel interactions
 
-NAME: Inventory processing 'Wingman Dashboard'
+NAME: Inventory 'Wingman' Dashboard
 
 ---> Please SEARCH/FIND VBA code HIGHLIGHTS with  " __________ " character set
+
+---> Script highlights are more visible and searchable in the TXT version of readme file !
+
 
 ### Removing header of SAP-import (done through text clipboard) with eg LIKE
 ### Application.Inputbox with : data entry, empty entry (fast re-use of previous data) and aborting
 ### Item search modifiers: User gets prompted, next put in use
-### Looped search via SAP t-code, in case of errors
+### Looped searching via SAP t-code in case of errors
+### Flipping through SAP tables (2) to pass on a list to another Subroutine
 ### Dictionary-based comparison of 2 lists
 ### Finding most frequent value in variable based range
 ### Calling other Sub
@@ -18,7 +22,10 @@ NAME: Inventory processing 'Wingman Dashboard'
 ### Subroutine to Read iDocs and pass its contenst to anoother sub
 ### Array formula looking for set of digits at 1 time, and returning their positions
 
-Details below:  ----------
++ extensive cross-tab, 2-SAP-t-codes automation of Material, price, value formula determination
++ as in screenshots (sheet example + dashboard looks in general)
+
+Details below:
 
 
 __________  ### Removing header of SAP-import through text clipboard (with eg LIKE):
@@ -108,9 +115,9 @@ Else                                                                            
 End If
 
 
-__________ ### Looped search via SAP t-code, in case of errors
+__________ ### Looped searching via SAP t-code in case of errors
 ErrHan3:
-If iDocWhse <> "" Then                                                                                'IDOC -> outside this Inventory Type -> run MB51
+If iDocWhse <> "" Then                                                                                'IDOC -> if outside this Inventory Type, run MB51
     GoTo ErrHan1
 ElseIf iDocWhse = "" Then                                                                             'non-idoc -> next Loop section
     GoTo ErrHan2
@@ -160,9 +167,68 @@ __________ ### Dictionary-based comparison of 2 lists
          End If
          Next
    End With
-   On Error Resume Next                                                                                   'feeds [E16] array with elements missing in [D16] vs [C16]
+   On Error Resume Next                                                                     	'feeds [E16] array with elements missing in [D16] vs [C16]
    [E16].Resize(n).Value = var
 
+__________ ### Flipping through SAP tables (2) to pass on a list to another Subroutine
+vbfa:                                                                                    	'call SE16 + VFA Table
+    session.findById("wnd[0]").maximize
+    session.findById("wnd[0]/tbar[0]/okcd").Text = "se16"
+    session.findById("wnd[0]").sendVKey 0
+    session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "VBFA"
+    session.findById("wnd[0]").sendVKey 0
+    
+If Del <> "" Then                                                                        	'if Delivery used, plug it in
+    session.findById("wnd[0]/usr/ctxtI3-LOW").Text = Del
+    session.findById("wnd[0]/tbar[1]/btn[8]").press
+    tdShipm = ""
+    GoTo exporting
+End If
+...
+If Len(Del) > 0 Then                                                                        	'if Del, jump to further export
+    Range("g1").Formula = "=TRIM(MID(h1" & Chr(38) & """ "",9,9))"
+    GoTo sec_exporting
+End If
+ 
+If Len(inv) > 0 Then                                                                        'if invoice, count ZKEs encountered
+    For mbline = 1 To zkeCount                                                              'and grab batches from exported lines
+        Range("g" & mbline).Formula = "=TRIM(MID(h" & mbline & "" & Chr(38) & """ "",9,9))"
+    Next mbline
+End If
+
+If Len(tdShipm) > 0 Then                                                                    'grab batch from exported lines
+    Range("g1").Formula = "=TRIM(MID(h1" & Chr(38) & """ "",8,10))"
+End If
+
+sec_exporting:                                              						' copy & paste all as values
+Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G1:G" & zkeCount).Select
+Selection.Copy
+...
+If Len(inv) > 0 Then                                        						'if invoice, jump to end process and export
+    GoTo ZKE
+End If
+
+If Len(tdShipm) > 0 Then                                    						'if TD shipm., take Del# from G1 cell
+    Del = Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G1").Value
+    Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G:H").ClearContents
+    GoTo vbfa                                               						' resume VBFA block above
+End If
+
+
+If Len(Del) > 0 Then                                        						'if Del, take ZKE# from G1 cell
+    ZKE = Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G1").Value
+    Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G:H").ClearContents
+    GoTo ZKE
+End If
+
+
+ZKE:                                                        						'run SE16 for ZSD_OM_CONS_ISS TABLE
+session.findById("wnd[0]").maximize
+session.findById("wnd[0]/tbar[0]/okcd").Text = "se16"
+session.findById("wnd[0]").sendVKey 0
+session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "ZSD_OM_CONS_ISS"
+session.findById("wnd[0]").sendVKey 0
+......
 
 __________ ### Finding most frequent value in variable based range
 wb.Worksheets("Compare").Range("H2").Formula = "=INDEX(A10:A" & count & ",MODE(MATCH(A10:A" & count & ",A10:A" & count & ",0)))"
@@ -172,7 +238,7 @@ mode = wb.Worksheets("Compare").Range("H2").Value                               
 __________ ### Mass range check with LIKE inside a Loop:
 pPos = 53
      For cPos = 1 To 33
-        If Range("AZ" & cPos) Like "#__#" Then                                                         'if indeed a Port used in consignment, add it to MD, so that MB51 includes it/them)
+        If Range("AZ" & cPos) Like "#__#" Then                                                  'if indeed a Port used in consignment, add it to MD, so that MB51 includes it/them)
            Range("AZ" & cPos).Copy
            Range("i" & pPos).Select
            Selection.PasteSpecial Paste:=xlPasteValues
