@@ -13,7 +13,7 @@ NAME: Inventory 'Wingman' Dashboard
 ### Application.Inputbox with : data entry, empty entry (fast re-use of previous data) and aborting
 ### Item search modifiers: User gets prompted, next put in use
 ### Looped searching via SAP t-code in case of errors
-### Flipping through SAP tables (2) to pass on a list to another Subroutine
+### ### Flipping through SAP tables (3, document-flow check equivalanet, now missing in SAP) to pass on data to main Subroutine
 ### Dictionary-based comparison of 2 lists
 ### Finding most frequent value in variable based range
 ### Calling other Sub
@@ -28,7 +28,7 @@ NAME: Inventory 'Wingman' Dashboard
 Details below:
 
 
-__________  ### Removing header of SAP-import through text clipboard (with eg LIKE):
+__________ ### Removing header of SAP-import through text clipboard (with eg LIKE):
 
 For pPos = 1 To 15                                                                              'highlight lines with rolls
     If Range("C" & pPos) Like "| ??#??????? *" Then
@@ -266,7 +266,7 @@ Range("G" & pfi).Formula = "=IFNA(TRIM(SWITCH(LEN(h" & pfi & "),148,MID(h" & pfi
     "MID(h" & pfi & "" & Chr(38) & """ "",125,9),149,MID(h" & pfi & "" & Chr(38) & """ "",122,7))),"""")"
 
 
-### Multiple XLookUps and variables inside formula, with Variables derived from earlier measuring of xls Ranges
+___________ ### Multiple XLookUps and variables inside formula, with Variables derived from earlier measuring of xls Ranges
 For Each cell In Range("E" & istartmi & ":E" & mic)
   Range("E" & istartmi & ":E" & mic).Formula = "=INDEX(N:N,MATCH((XLOOKUP(C" & istartmi & ",Compare!$E$" & istartmi & ":$E$70000," & _
   "Compare!$A$" & istartmi & ":$A$70000)&(XLOOKUP(C" & istartmi & ",Compare!$E$" & istartmi & ":$E$70000,Compare!$C$" & istartmi & ":$C$70000))),M:M,0))"
