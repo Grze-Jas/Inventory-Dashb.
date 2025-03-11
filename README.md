@@ -13,7 +13,7 @@ NAME: Inventory 'Wingman' Dashboard
 ### Application.Inputbox with : data entry, empty entry (fast re-use of previous data) and aborting
 ### Item search modifiers: User gets prompted, next put in use
 ### Looped searching via SAP t-code in case of errors
-### Flipping through SAP tables (2) to pass on a list to another Subroutine
+### Flipping through SAP tables (3, document-flow check equivalanet, now missing in SAP) to pass on data to main Subroutine
 ### Dictionary-based comparison of 2 lists
 ### Finding most frequent value in variable based range
 ### Calling other Subs
@@ -170,7 +170,7 @@ __________ ### Dictionary-based comparison of 2 lists
    On Error Resume Next                                                                                   'feeds [E16] array with elements missing in [D16] vs [C16]
    [E16].Resize(n).Value = var
 
-### Flipping through SAP tables (3, document-flow check equivalanet, now missing in SAP) to pass on data to another Subroutine
+__________ ### Flipping through SAP tables (3, document-flow check equivalanet, now missing in SAP) to pass on data to main Subroutine
 
 If IntShip <> "" Then                                        'in case Internal Shipm, plug it in, jump to exporting
     session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "VBFA"
