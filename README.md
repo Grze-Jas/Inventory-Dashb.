@@ -16,7 +16,7 @@ NAME: Inventory 'Wingman' Dashboard
 ### Flipping through SAP tables (2) to pass on a list to another Subroutine
 ### Dictionary-based comparison of 2 lists
 ### Finding most frequent value in variable based range
-### Calling other Sub
+### Calling other Subs
 ### Powerful SWTICH-featuring Formula to check text lengths and start creating other logics
 ### MB1B (invetory transfer) mass transacting
 ### Subroutine to Read iDocs and pass its contenst to anoother sub
@@ -170,65 +170,66 @@ __________ ### Dictionary-based comparison of 2 lists
    On Error Resume Next                                                                                   'feeds [E16] array with elements missing in [D16] vs [C16]
    [E16].Resize(n).Value = var
 
-### Flipping through SAP tables (2) to pass on a list to another Subroutine
-vbfa:                                                                                    'call SE16 + VFA Table
-    session.findById("wnd[0]").maximize
-    session.findById("wnd[0]/tbar[0]/okcd").Text = "se16"
-    session.findById("wnd[0]").sendVKey 0
+### Flipping through SAP tables (3, document-flow check equivalanet, now missing in SAP) to pass on data to another Subroutine
+
+If IntShip <> "" Then                                        'in case Internal Shipm, plug it in, jump to exporting
     session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "VBFA"
     session.findById("wnd[0]").sendVKey 0
-    
-If Del <> "" Then                                                                        'if Delivery used, plug it in
-    session.findById("wnd[0]/usr/ctxtI3-LOW").Text = Del
+    session.findById("wnd[0]/usr/ctxtI3-LOW").Text = IntShip
     session.findById("wnd[0]/tbar[1]/btn[8]").press
-    tdShipm = ""
+    cont = vbNullString
     GoTo exporting
 End If
-...
-If Len(Del) > 0 Then                                                                        'if Del, jump to further export
-    Range("g1").Formula = "=TRIM(MID(h1" & Chr(38) & """ "",9,9))"
-    GoTo sec_exporting
-End If
- 
-If Len(inv) > 0 Then                                                                        'if invoice, count ZKEs encountered
-    For mbline = 1 To zkeCount                                                              'and grab batches from exported lines
-        Range("g" & mbline).Formula = "=TRIM(MID(h" & mbline & "" & Chr(38) & """ "",9,9))"
-    Next mbline
-End If
 
-If Len(tdShipm) > 0 Then                                                                    'grab batch from exported lines
-    Range("g1").Formula = "=TRIM(MID(h1" & Chr(38) & """ "",8,10))"
-End If
+recogn:
 
-sec_exporting:                                              ' copy & paste all as values
-Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G1:G" & zkeCount).Select
-Selection.Copy
-...
-If Len(inv) > 0 Then                                        'if invoice, jump to end process and export
+If item.Value Like "9000######" Then                        'if TD-Shipment used, plug it in
+    cfosShipm = item.Value
+    session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "VBFA"
+    session.findById("wnd[0]").sendVKey 0
+    session.findById("wnd[0]/usr/ctxtI3-LOW").Text = cfosShipm
+    session.findById("wnd[0]/tbar[1]/btn[8]").press
+ElseIf item.Value Like "900#######" Then                    'INVOICE
+    inv = item.Value
+    session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "VBFA"
+    session.findById("wnd[0]").sendVKey 0
+    session.findById("wnd[0]/usr/ctxtI3-LOW").Text = inv
+    session.findById("wnd[0]/tbar[1]/btn[8]").press
+                                                            'sorting for ZKEs mixed up with Dlvr's
+    session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").setCurrentCell -1, "VBELV"
+    session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn "VBELV"
+    session.findById("wnd[0]/tbar[1]/btn[28]").press
+ElseIf item.Value Like "80########" Then                   'DELIVERY
+        Delivery = item.Value
+        session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "VBFA"
+        session.findById("wnd[0]").sendVKey 0
+        session.findById("wnd[0]/usr/ctxtI3-LOW").Text = Delivery
+        session.findById("wnd[0]/tbar[1]/btn[8]").press
+ElseIf item.Value Like "???[A-Z]#######" Then               'if Container
+    cont = item.Value
+    session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "VTTK"
+    session.findById("wnd[0]").sendVKey 0
+    session.findById("wnd[0]/usr/txtI21-LOW").Text = cont
+    session.findById("wnd[0]/tbar[1]/btn[8]").press
+
+ElseIf item.Value Like "10#######" Then                      'if order
+    ZKE = item.Value
+    GoTo ZKE
+Else                                                        'else item = Vehicle ID (delivery Note ref.)
+    VehID = UCase(VehID)
+    If Left(VehID, 3) = "GP2" Then
+        VehID = Replace(VehID, "GP2", "")
+    End If
     GoTo ZKE
 End If
+        
+exporting:                                                  'exporting from VBFA
+ On Error GoTo ErrHan
+ session.findById("wnd[0]/tbar[1]/btn[45]").press
+ session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[4,0]").Select
+ session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[4,0]").SetFocus
+ session.findById("wnd[1]/tbar[0]/btn[0]").press
 
-If Len(tdShipm) > 0 Then                                    'if TD shipm., take Del# from G1 cell
-    Del = Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G1").Value
-    Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G:H").ClearContents
-    GoTo vbfa                                               ' resume VBFA block above
-End If
-
-
-If Len(Del) > 0 Then                                        'if Del, take ZKE# from G1 cell
-    ZKE = Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G1").Value
-    Workbooks("c-trics.xlsm").Worksheets("Zoom").Range("G:H").ClearContents
-    GoTo ZKE
-End If
-
-
-ZKE:                                                        'run SE16 for ZSD_OM_CONS_ISS TABLE
-session.findById("wnd[0]").maximize
-session.findById("wnd[0]/tbar[0]/okcd").Text = "se16"
-session.findById("wnd[0]").sendVKey 0
-session.findById("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "ZSD_OM_CONS_ISS"
-session.findById("wnd[0]").sendVKey 0
-......
 
 __________ ### Finding most frequent value in variable based range
 wb.Worksheets("Compare").Range("H2").Formula = "=INDEX(A10:A" & count & ",MODE(MATCH(A10:A" & count & ",A10:A" & count & ",0)))"
