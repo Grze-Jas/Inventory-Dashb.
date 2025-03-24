@@ -12,8 +12,8 @@ NAME: Inventory 'Wingman' Dashboard
 ### Removing header of SAP-import (done through text clipboard) with eg LIKE
 ### Application.Inputbox with : data entry, empty entry (fast re-use of previous data) and aborting
 ### Item search modifiers: User gets prompted, next put in use
-### Looped searching via SAP t-code in case of errors
-### ### Flipping through SAP tables (3, document-flow check equivalanet, now missing in SAP) to pass on data to main Subroutine
+### Looped searching via SAP Zxxxx transaction type in case of errors
+### Flipping through SAP tables (3, document-flow check equivalanet, now missing in SAP) to pass on data to main Subroutine
 ### Dictionary-based comparison of 2 lists
 ### Finding most frequent value in variable based range
 ### Calling other Sub
@@ -115,7 +115,7 @@ Else                                                                            
 End If
 
 
-__________ ### Looped searching via SAP t-code in case of errors
+__________ ### Looped searching via SAP Zxxxx transaction type in case of errors
 ErrHan3:
 If iDocWhse <> "" Then                                                                                'IDOC -> if outside this Inventory Type, run MB51
     GoTo ErrHan1
