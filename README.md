@@ -18,7 +18,7 @@ NAME: Inventory 'Wingman' Dashboard
 ### Finding most frequent value in variable based range
 ### Calling other Subs
 ### Powerful SWITCH-featuring Formula to check text lengths and start creating other logics
-### MB1B (invetory transfer) mass transacting
+### MB1B (invetory transfer) mass transacting (journal entry-like)
 ### Subroutine to Read iDocs and pass its contents to anoother Sub
 ### Array formula looking for set of digits at 1 time, and returning their positions
 
