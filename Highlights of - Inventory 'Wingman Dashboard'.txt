@@ -18,7 +18,7 @@ NAME: Inventory 'Wingman' Dashboard
 ### Finding most frequent value in variable based range
 ### Calling other Sub
 ### Powerful SWITCH-featuring Formula to check text lengths and start creating other logics
-### MB1B (invetory transfer) mass transacting (journal entry-like)
+### MB1B (inventory transfer) mass transacting (journal entry-like)
 ### Subroutine to Read iDocs and pass its contenst to anoother sub
 ### Array formula looking for set of digits at 1 time, and returning their positions
 
@@ -365,7 +365,7 @@ ElseIf iPos = 1 And bPos >= 25 Then
 End If
 
 
-__________ ### MB1B (invetory transfer) mass transacting (journal entry-like)
+__________ ### MB1B (inventory transfer) mass transacting (journal entry-like)
 If iter = 0 Then                                                                                                                 'For ! BATCH 1 only !
     session.findById("wnd[0]/usr/sub:SAPMM07M:0421/ctxtMSEG-MATNR[0,7]").Text = material                                         'other transf. param's
     session.findById("wnd[0]/usr/sub:SAPMM07M:0421/txtMSEG-ERFMG[0,26]").Text = "1"
