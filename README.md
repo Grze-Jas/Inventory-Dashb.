@@ -2,9 +2,9 @@
 
 VBA project; focus on SAP <> Excel interactions
 
-NAME: Inventory 'Wingman' Dashboard
+NAME: 'Wingman' Inventory Dashboard
 
----> Please SEARCH/FIND VBA code HIGHLIGHTS with  " __________ " character set
+---> PLease SEARCH VBA code HIGHLIGHTS with  "__________" character set
 
 ---> Script highlights are more visible and searchable in the TXT version of readme file !
 
