@@ -2,7 +2,7 @@
 
 VBA project; focus on SAP <> Excel interactions
 
-NAME: Inventory 'Wingman' Dashboard
+NAME: 'Wingman' Inventory Dashboard
 
 ---> Please SEARCH VBA code HIGHLIGHTS with  "__________" character set
 
