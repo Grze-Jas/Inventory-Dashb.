@@ -19,6 +19,7 @@ NAME: Inventory 'Wingman' Dashboard
 ### Calling other Subs
 ### Powerful SWITCH-featuring Formula to check text lengths and start creating other logics
 ### MB1B (inventory transfer) mass transacting (journal entry-like)
+### Very basic array size check
 ### Subroutine to Read iDocs and pass its contents to another Sub
 ### Array formula looking for a SET of digits at ONE time, and returning their positions
 
@@ -274,7 +275,17 @@ For Each cell In Range("E" & istartmi & ":E" & mic)
 Next cell
 
 
-__________ ### Subroutine to Read iDocs and pass its contenst to anoother sub
+__________ ### Very basic array size check
+...
+batches.Select
+bCk = batches.count
+
+If bCk Mod 3 <> 0 Then
+    MsgBox "You mis-picked the cells, it's not a value TRIPLET, please retry !", vbCritical, "Not a TRIPLET"
+    Exit Sub
+End If
+
+__________ ### Subroutine to Read iDocs and pass its contenst to another sub
 ...                                                                                                        'preparation formula agaoinst iDoc items          
 =IF(LEFT(A27,6)="CREDAT",CONCAT("_"&(RIGHT(A27,8))),IF(LEFT(A27,16)="IDocNumber:00000",RIGHT(A27,10),IF(LEFT(A27,8)="NameDesc", & _
 CONCAT("="),IF(LEFT(A27,5)="ABTNR",CONCAT("SCAC_"&(RIGHT(A27,4))),IF(LEFT(A27,3)="MAT",RIGHT(LEFT(A27,15),10),IF(LEFT(A27,4)="MEST", & _
