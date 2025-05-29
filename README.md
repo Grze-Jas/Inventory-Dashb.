@@ -13,14 +13,14 @@ NAME: Inventory 'Wingman' Dashboard
 ### Application.Inputbox with : data entry, empty entry (fast re-use of previous data) and aborting
 ### Item search modifiers: User gets prompted, next put in use
 ### Looped searching via SAP Zxxxx transaction type in case of errors
-### Flipping through SAP tables (3, document-flow check equivalanet, now missing in SAP) to pass on data to main Subroutine
+### Flipping through SAP tables (3, document-flow check equivalent, now missing in SAP) to pass on data to main Subroutine
 ### Dictionary-based comparison of 2 lists
 ### Finding most frequent value in variable based range
 ### Calling other Subs
 ### Powerful SWITCH-featuring Formula to check text lengths and start creating other logics
 ### MB1B (inventory transfer) mass transacting (journal entry-like)
-### Subroutine to Read iDocs and pass its contents to anoother Sub
-### Array formula looking for set of digits at 1 time, and returning their positions
+### Subroutine to Read iDocs and pass its contents to another Sub
+### Array formula looking for a SET of digits at ONE time, and returning their positions
 
 + extensive cross-tab, 2-SAP-t-codes automation of Material, price, value formula determination
 + as in screenshots (sheet example + dashboard looks in general)
